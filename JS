@@ -1,0 +1,566 @@
+const telaMenu = document.getElementById("tela-menu");
+const telaJogo = document.getElementById("tela-jogo");
+const tabuleiro = document.getElementById("tabuleiro");
+const telaVitoria = document.getElementById("tela-vitoria");
+const modalConfig = document.getElementById("modal-config");
+
+const elementoPares = document.getElementById("pares-encontrados");
+const elementoDificuldade = document.getElementById("dificuldade-atual");
+const elementoPontosJogador = document.getElementById("pontos-jogador");
+const elementoPontosIA = document.getElementById("pontos-ia");
+const mensagemJogo = document.getElementById("mensagem-jogo");
+
+const tituloVitoria = document.getElementById("titulo-vitoria");
+const subtituloVitoria = document.getElementById("subtitulo-vitoria");
+const statTotalCartas = document.getElementById("stat-total-cartas");
+const statPares = document.getElementById("stat-pares");
+const statPtsJogador = document.getElementById("stat-pts-jogador");
+const statPtsIA = document.getElementById("stat-pts-ia");
+
+const botaoJogar = document.getElementById("jogar");
+const botaoVoltar = document.getElementById("voltar-menu");
+const botaoReiniciar = document.getElementById("reiniciar");
+const botaoJogarNovamente = document.getElementById("jogar-novamente");
+const botaoIrParaMenu = document.getElementById("ir-para-menu");
+
+const btnConfigPrincipal = document.getElementById("btn-config-principal");
+const btnConfigJogo = document.getElementById("btn-config-jogo");
+const fecharConfig = document.getElementById("fechar-config");
+const rangeMusica = document.getElementById("volume-musica");
+const rangeSfx = document.getElementById("volume-sfx");
+const valMusica = document.getElementById("val-musica");
+const valSfx = document.getElementById("val-sfx");
+
+const botoesDificuldade = document.querySelectorAll(".opcao-dificuldade");
+const botoesTema = document.querySelectorAll(".opcao-tema");
+const botoesGrid = document.querySelectorAll(".opcao-cartas");
+
+let dificuldadeEscolhida = "facil";
+let temaEscolhido = "emojis";
+let gridTamanho = 4;
+
+let cartasViradas = [];
+let paresEncontrados = 0;
+let totalParesDaPartida = 2;
+let totalCelulasPartida = 4;
+let pontosJogador = 0;
+let pontosIA = 0;
+
+let turno = "jogador";
+let bloqueado = false;
+let partidaEncerrada = false;
+let tempoDeEspera = null;
+
+// IA Memory Mapping
+let memoriaIA = new Map();
+let cartasConhecidasIA = new Set();
+
+// Áudio
+let audioCtx = null;
+let gainMusica = null;
+let gainSfx = null;
+let timerMusica = null;
+let passoRitmo = 0;
+
+const temasFiguras = {
+    emojis: ["😀", "🚀", "🍕", "🐱", "🎸", "⚡", "🌟", "🔥", "🎨", "⚽", "🧸", "💡", "🍀", "💎", "🍩", "🎁", "🌴", "🤖"],
+    animais: ["🐶", "🐱", "🦁", "🐯", "🦊", "🐼", "🐨", "🐰", "🐵", "🐧", "🦄", "🐢", "🐸", "🐙", "🦋", "🐬", "🦓", "🦒"],
+    espaco: ["🌍", "🌙", "🛸", "⭐", "🚀", "🪐", "👽", "☄️", "🛰️", "👨‍🚀", "🔭", "🌌", "☀️", "⚡", "🔮", "🔥", "🌀", "💫"],
+    comidas: ["🍎", "🍌", "🍔", "🍕", "🍣", "🍦", "🍩", "🍪", "🍉", "🍓", "🍇", "🍍", "🥑", "🧀", "🍫", "🍿", "🥞", "🍯"],
+    profissoes: ["👨‍💻", "👩‍⚕️", "👨‍🏫", "👩‍🍳", "👨‍🚒", "👮‍♂️", "👩‍✈️", "🕵️‍♂️", "👷‍♀️", "🧑‍🎤", "👩‍🎨", "🧑‍🔬", "👨‍🌾", "👩‍⚖️", "🧑‍🔧", "🦸‍♂️", "🧙‍♀️", "🧛‍♂️"],
+    esportes: ["⚽", "🏀", "🎾", "🏈", "⚾", "🏐", "🏉", "🥏", "🎳", "🏓", "🏸", "🏒", "🥋", "🛹", "🥊", "🏹", "🎣", "🎽"],
+    aplicativos: ["📱", "💻", "⚡", "🎮", "📸", "🎧", "📷", "⌚", "📺", "🕹️", "💾", "🔋", "💡", "🔑", "📡", "🌐", "🖨️", "🧭"]
+};
+
+function inicializarAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        gainMusica = audioCtx.createGain();
+        gainMusica.gain.value = Number(rangeMusica.value) / 100 * 0.7;
+        gainMusica.connect(audioCtx.destination);
+
+        gainSfx = audioCtx.createGain();
+        gainSfx.gain.value = Number(rangeSfx.value) / 100;
+        gainSfx.connect(audioCtx.destination);
+
+        iniciarTrilhaSonora();
+    }
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+}
+
+["click", "touchstart", "keydown", "mousemove"].forEach(evento => {
+    window.addEventListener(evento, () => {
+        if (!audioCtx || audioCtx.state !== "running") {
+            inicializarAudio();
+        }
+    }, { once: true });
+});
+
+function iniciarTrilhaSonora() {
+    if (timerMusica) return;
+    const melodia = [330.00, 392.00, 440.00, 523.25, 440.00, 392.00, 329.63, 293.66];
+
+    timerMusica = setInterval(() => {
+        if (!audioCtx || audioCtx.state !== "running") return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = "triangle";
+        const nota = melodia[passoRitmo % melodia.length];
+        osc.frequency.setValueAtTime(nota, audioCtx.currentTime);
+
+        const volAtual = (Number(rangeMusica.value) / 100) * 0.25;
+        gain.gain.setValueAtTime(volAtual, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+
+        osc.connect(gain);
+        gain.connect(gainMusica);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+
+        passoRitmo++;
+    }, 500);
+}
+
+function tocarSomClique() {
+    inicializarAudio();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(350, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime((Number(rangeSfx.value) / 100) * 0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+    osc.connect(gain);
+    gain.connect(gainSfx);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.08);
+}
+
+function tocarSomVirar() {
+    inicializarAudio();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime((Number(rangeSfx.value) / 100) * 0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.connect(gain);
+    gain.connect(gainSfx);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function tocarSomAcerto() {
+    inicializarAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    [523.25, 659.25, 783.99].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime((Number(rangeSfx.value) / 100) * 0.3, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.2);
+        osc.connect(gain);
+        gain.connect(gainSfx);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 0.2);
+    });
+}
+
+function tocarSomErro() {
+    inicializarAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+    gain.gain.setValueAtTime((Number(rangeSfx.value) / 100) * 0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain);
+    gain.connect(gainSfx);
+    osc.start(now);
+    osc.stop(now + 0.2);
+}
+
+// Configuração de Eventos do Menu
+botoesDificuldade.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tocarSomClique();
+        botoesDificuldade.forEach(b => b.classList.remove("selecionada"));
+        btn.classList.add("selecionada");
+        dificuldadeEscolhida = btn.dataset.dificuldade;
+    });
+});
+
+botoesTema.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tocarSomClique();
+        botoesTema.forEach(b => b.classList.remove("selecionado"));
+        btn.classList.add("selecionado");
+        temaEscolhido = btn.dataset.tema;
+    });
+});
+
+botoesGrid.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tocarSomClique();
+        botoesGrid.forEach(b => b.classList.remove("selecionada"));
+        btn.classList.add("selecionada");
+        gridTamanho = Number(btn.dataset.grid);
+    });
+});
+
+botaoJogar.addEventListener("click", () => {
+    tocarSomClique();
+    iniciarJogo();
+});
+
+botaoVoltar.addEventListener("click", () => {
+    tocarSomClique();
+    voltarAoMenu();
+});
+
+botaoReiniciar.addEventListener("click", () => {
+    tocarSomClique();
+    iniciarJogo();
+});
+
+botaoJogarNovamente.addEventListener("click", () => {
+    tocarSomClique();
+    telaVitoria.classList.add("escondido");
+    iniciarJogo();
+});
+
+botaoIrParaMenu.addEventListener("click", () => {
+    tocarSomClique();
+    telaVitoria.classList.add("escondido");
+    voltarAoMenu();
+});
+
+btnConfigPrincipal.addEventListener("click", () => {
+    tocarSomClique();
+    modalConfig.classList.remove("escondido");
+});
+
+btnConfigJogo.addEventListener("click", () => {
+    tocarSomClique();
+    modalConfig.classList.remove("escondido");
+});
+
+fecharConfig.addEventListener("click", () => {
+    tocarSomClique();
+    modalConfig.classList.add("escondido");
+});
+
+rangeMusica.addEventListener("input", (e) => {
+    valMusica.textContent = `${e.target.value}%`;
+    if (gainMusica && audioCtx) {
+        gainMusica.gain.value = (Number(e.target.value) / 100) * 0.7;
+    }
+});
+
+rangeSfx.addEventListener("input", (e) => {
+    valSfx.textContent = `${e.target.value}%`;
+    if (gainSfx) {
+        gainSfx.gain.value = Number(e.target.value) / 100;
+    }
+});
+
+function voltarAoMenu() {
+    if (tempoDeEspera) clearTimeout(tempoDeEspera);
+    telaJogo.classList.add("escondido");
+    telaMenu.classList.remove("escondido");
+}
+
+function iniciarJogo() {
+    telaMenu.classList.add("escondido");
+    telaJogo.classList.remove("escondido");
+
+    cartasViradas = [];
+    paresEncontrados = 0;
+    pontosJogador = 0;
+    pontosIA = 0;
+    turno = "jogador";
+    bloqueado = false;
+    partidaEncerrada = false;
+    memoriaIA.clear();
+    cartasConhecidasIA.clear();
+
+    totalCelulasPartida = gridTamanho;
+    totalParesDaPartida = totalCelulasPartida / 2;
+
+    atualizarPainel();
+    configurarLayoutTabuleiro();
+    gerarCartas();
+}
+
+function atualizarPainel() {
+    elementoPares.textContent = `${paresEncontrados} / ${totalParesDaPartida}`;
+    elementoPontosJogador.textContent = pontosJogador;
+    elementoPontosIA.textContent = pontosIA;
+
+    let nomeDif = dificuldadeEscolhida.charAt(0).toUpperCase() + dificuldadeEscolhida.slice(1);
+    let nomeTema = temaEscolhido.charAt(0).toUpperCase() + temaEscolhido.slice(1);
+    elementoDificuldade.textContent = `${nomeDif} • ${nomeTema}`;
+
+    // Atualiza o texto do rodapé e aplica a cor correspondente (Azul para jogador, Cinza para IA)
+    if (turno === "jogador") {
+        mensagemJogo.textContent = "Sua vez! Escolha duas cartas.";
+        mensagemJogo.className = "turno-jogador";
+    } else {
+        mensagemJogo.textContent = "Vez da IA pensando...";
+        mensagemJogo.className = "turno-ia";
+    }
+}
+
+function configurarLayoutTabuleiro() {
+    tabuleiro.innerHTML = "";
+    let colunas = 2;
+    if (gridTamanho === 12) colunas = 4;
+    else if (gridTamanho === 16) colunas = 4;
+    else if (gridTamanho === 20) colunas = 5;
+    else if (gridTamanho === 36) colunas = 6;
+
+    tabuleiro.style.gridTemplateColumns = `repeat(${colunas}, minmax(0, 1fr))`;
+}
+
+function gerarCartas() {
+    const figurasTema = temasFiguras[temaEscolhido];
+    const qtdPares = totalParesDaPartida;
+
+    // Embaralha e pega apenas a quantidade de figuras necessárias
+    const figurasEmbaralhadas = [...figurasTema].sort(() => Math.random() - 0.5);
+    const selecionadas = figurasEmbaralhadas.slice(0, qtdPares);
+    const cartasItens = [...selecionadas, ...selecionadas].sort(() => Math.random() - 0.5);
+
+    cartasItens.forEach((figura, index) => {
+        const carta = document.createElement("button");
+        carta.classList.add("carta");
+        carta.setAttribute("type", "button");
+        carta.dataset.valor = figura;
+        carta.dataset.index = index;
+
+        carta.innerHTML = `
+            <div class="frente-carta">❓</div>
+            <div class="verso-carta">${figura}</div>
+        `;
+
+        carta.addEventListener("click", () => clicarCarta(carta));
+        tabuleiro.appendChild(carta);
+    });
+}
+
+function clicarCarta(carta) {
+    if (bloqueado || partidaEncerrada) return;
+    if (turno !== "jogador") return;
+    if (carta.classList.contains("virada") || carta.classList.contains("encontrada")) return;
+    if (cartasViradas.includes(carta)) return;
+
+    tocarSomVirar();
+    carta.classList.add("virada");
+    cartasViradas.push(carta);
+
+    // Registra na memória da IA
+    const idx = carta.dataset.index;
+    const val = carta.dataset.valor;
+    memoriaIA.set(idx, val);
+    cartasConhecidasIA.add(idx);
+
+    if (cartasViradas.length === 2) {
+        bloqueado = true;
+        verificarPar();
+    }
+}
+
+function verificarPar() {
+    const [carta1, carta2] = cartasViradas;
+    const val1 = carta1.dataset.valor;
+    const val2 = carta2.dataset.valor;
+
+    if (val1 === val2) {
+        tocarSomAcerto();
+        paresEncontrados++;
+
+        if (turno === "jogador") {
+            pontosJogador += 10;
+            carta1.classList.add("encontrada");
+            carta2.classList.add("encontrada");
+        } else {
+            pontosIA += 10;
+            carta1.classList.add("encontrada-ia");
+            carta2.classList.add("encontrada-ia");
+        }
+
+        carta1.disabled = true;
+        carta2.disabled = true;
+
+        cartasViradas = [];
+        atualizarPainel();
+
+        if (paresEncontrados === totalParesDaPartida) {
+            finalizarPartida();
+        } else {
+            bloqueado = false;
+            // Se a IA acertou, ela joga de novo
+            if (turno === "ia") {
+                tempoDeEspera = setTimeout(jogadaIA, 1000);
+            }
+        }
+    } else {
+        tocarSomErro();
+        carta1.classList.add("erro");
+        carta2.classList.add("erro");
+
+        tempoDeEspera = setTimeout(() => {
+            carta1.classList.remove("virada", "erro");
+            carta2.classList.remove("virada", "erro");
+            cartasViradas = [];
+            bloqueado = false;
+
+            // Troca o turno
+            turno = turno === "jogador" ? "ia" : "jogador";
+            atualizarPainel();
+
+            if (turno === "ia") {
+                tempoDeEspera = setTimeout(jogadaIA, 1000);
+            }
+        }, 1000);
+    }
+}
+
+function jogadaIA() {
+    if (partidaEncerrada) return;
+    bloqueado = true;
+    atualizarPainel();
+
+    tempoDeEspera = setTimeout(() => {
+        if (partidaEncerrada) return;
+
+        const cartasDisponiveis = Array.from(document.querySelectorAll(".carta:not(:disabled):not(.virada)"));
+        if (cartasDisponiveis.length === 0) return;
+
+        let primeiraEscolha = null;
+        let segundaEscolha = null;
+
+        // Estratégia da IA baseada na dificuldade e memória
+        let chanceAcerto = 0.3; // Fácil
+        if (dificuldadeEscolhida === "normal") chanceAcerto = 0.6;
+        if (dificuldadeEscolhida === "dificil" || dificuldadeEscolhida === "aleatorio") chanceAcerto = 0.95;
+
+        // Tenta achar um par conhecido na memória
+        if (Math.random() < chanceAcerto) {
+            let paresConhecidos = encontrarParNaMemoria(cartasDisponiveis);
+            if (paresConhecidos) {
+                primeiraEscolha = paresConhecidos[0];
+                segundaEscolha = paresConhecidos[1];
+            }
+        }
+
+        // Se não achou par na memória, escolhe aleatório
+        if (!primeiraEscolha) {
+            primeiraEscolha = cartasDisponiveis[Math.floor(Math.random() * cartasDisponiveis.length)];
+            cartasConhecidasIA.add(primeiraEscolha.dataset.index);
+            memoriaIA.set(primeiraEscolha.dataset.index, primeiraEscolha.dataset.valor);
+        }
+
+        tocarSomVirar();
+        primeiraEscolha.classList.add("virada");
+        cartasViradas.push(primeiraEscolha);
+
+        tempoDeEspera = setTimeout(() => {
+            if (partidaEncerrada) return;
+
+            if (!segundaEscolha) {
+                // Tenta achar o par da primeira carta na memória
+                const val1 = primeiraEscolha.dataset.valor;
+                const idx1 = primeiraEscolha.dataset.index;
+                let cartaEncontradaPar = null;
+
+                for (let [idx, val] of memoriaIA.entries()) {
+                    if (val === val1 && idx !== idx1) {
+                        let elem = document.querySelector(`.carta[data-index='${idx}']:not(:disabled):not(.virada)`);
+                        if (elem) {
+                            cartaEncontradaPar = elem;
+                            break;
+                        }
+                    }
+                }
+
+                if (cartaEncontradaPar && Math.random() < chanceAcerto) {
+                    segundaEscolha = cartaEncontradaPar;
+                } else {
+                    const restantes = cartasDisponiveis.filter(c => c !== primeiraEscolha);
+                    segundaEscolha = restantes[Math.floor(Math.random() * restantes.length)];
+                }
+            }
+
+            tocarSomVirar();
+            segundaEscolha.classList.add("virada");
+            cartasViradas.push(segundaEscolha);
+
+            const idx2 = segundaEscolha.dataset.index;
+            const val2 = segundaEscolha.dataset.valor;
+            memoriaIA.set(idx2, val2);
+            cartasConhecidasIA.add(idx2);
+
+            tempoDeEspera = setTimeout(() => {
+                verificarPar();
+            }, 900);
+
+        }, 800);
+
+    }, 800);
+}
+
+function encontrarParNaMemoria(disponiveis) {
+    let mapaValores = new Map();
+    for (let carta of disponiveis) {
+        let val = carta.dataset.valor;
+        if (mapaValores.has(val)) {
+            return [mapaValores.get(val), carta];
+        }
+        mapaValores.set(val, carta);
+    }
+    return null;
+}
+
+function finalizarPartida() {
+    partidaEncerrada = true;
+    if (tempoDeEspera) clearTimeout(tempoDeEspera);
+
+    statTotalCartas.textContent = totalCelulasPartida;
+    statPares.textContent = `${paresEncontrados} / ${totalParesDaPartida}`;
+    statPtsJogador.textContent = pontosJogador;
+    statPtsIA.textContent = pontosIA;
+
+    if (pontosJogador > pontosIA) {
+        tituloVitoria.textContent = "🎉 Você Venceu a IA!";
+        subtituloVitoria.textContent = "Parabéns, sua memória foi superior!";
+    } else if (pontosIA > pontosJogador) {
+        tituloVitoria.textContent = "🤖 A IA Venceu!";
+        subtituloVitoria.textContent = "Não foi dessa vez, tente novamente!";
+    } else {
+        tituloVitoria.textContent = "🤝 Empate!";
+        subtituloVitoria.textContent = "Vocês jogaram muito bem!";
+    }
+
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+
+    telaVitoria.classList.remove("escondido");
+}
