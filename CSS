@@ -1,58 +1,55 @@
+/* CSS Otimizado para Tablet & Responsividade Total */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 :root {
-    --fundo: #111222;
-    --painel: #191a31;
+    --fundo: #0d0e1b;
+    --painel: #16172d;
     --roxo: #7667ff;
     --azul: #438cff;
     --texto: #f4f3ff;
     --texto-secundario: #a4a7c5;
     --borda: #303251;
+    --sucesso: #2e7d54;
 }
 
-html,
-body {
+html, body {
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    background: radial-gradient(ellipse at top, #25204c 0%, var(--fundo) 55%);
+    background: radial-gradient(circle at center, #1e1b4b 0%, var(--fundo) 100%);
     color: var(--texto);
-    font-family: Arial, sans-serif;
-    padding: 8px 12px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: 16px;
 }
 
 button {
     font: inherit;
+    cursor: pointer;
 }
 
 .escondido {
     display: none !important;
 }
 
-.menu,
-.tela-jogo {
+/* Estrutura de Telas Adaptadas para Tablet (Portrait & Landscape) */
+.menu, .tela-jogo {
     width: 100%;
-    max-width: 900px;
-    height: 100%;
-    max-height: 100vh;
+    max-width: 820px;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 0 auto;
-}
-
-.tela-jogo {
-    justify-content: center;
-    align-items: center;
+    gap: 16px;
+    margin: auto;
+    padding: 10px 0;
 }
 
 .cabecalho {
@@ -61,186 +58,165 @@ button {
 }
 
 .icone-logo {
-    width: 52px;
-    height: 52px;
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 6px;
-    border: 1px solid #6659c9;
-    border-radius: 14px;
+    margin: 0 auto 10px;
+    border: 2px solid #6659c9;
+    border-radius: 18px;
     background: linear-gradient(135deg, #332c6e, #263f78);
-    font-size: 24px;
+    font-size: 32px;
+    box-shadow: 0 6px 20px rgba(118, 103, 255, 0.3);
 }
 
 .cabecalho h1 {
-    font-size: clamp(24px, 3.8vw, 36px);
-    letter-spacing: -1px;
+    font-size: clamp(28px, 4.5vw, 38px);
+    letter-spacing: -0.5px;
 }
 
 .cabecalho p {
-    margin-top: 2px;
+    margin-top: 4px;
     color: var(--texto-secundario);
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .modulo {
-    margin-bottom: 8px;
-    padding: 10px 16px;
+    padding: 16px 20px;
     border: 1px solid var(--borda);
-    border-radius: 12px;
-    background: #191a31ef;
+    border-radius: 16px;
+    background: rgba(25, 26, 49, 0.95);
     width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 .titulo-modulo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 14px;
+    margin-bottom: 12px;
 }
 
 .numero {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     border: 1px solid #5148a1;
-    border-radius: 8px;
+    border-radius: 10px;
     background: #29264e;
     color: #a69cff;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 .titulo-modulo h2 {
-    font-size: 17px;
-    margin-bottom: 0;
+    font-size: 19px;
+    margin-bottom: 2px;
 }
 
 .titulo-modulo p {
     color: var(--texto-secundario);
-    font-size: 13px;
+    font-size: 14px;
 }
 
+/* Grade de Opções Touch-Friendly para Tablets */
 .opcoes-dificuldade {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
+    gap: 12px;
 }
 
 .opcoes-cartas {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
+}
+
+.opcoes-tema {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .btn-interativo {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.btn-interativo:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 12px rgba(118, 103, 255, 0.4);
-    z-index: 5;
+.btn-interativo:active {
+    transform: scale(0.96);
 }
 
-.opcao-dificuldade,
-.opcao-tema,
-.opcao-cartas {
-    min-width: 0;
+.opcao-dificuldade, .opcao-tema, .opcao-cartas {
+    min-height: 70px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    padding: 8px 4px;
-    border: 1px solid var(--borda);
-    border-radius: 8px;
+    gap: 4px;
+    padding: 12px 8px;
+    border: 2px solid var(--borda);
+    border-radius: 12px;
     background: #1e2039;
     color: var(--texto);
     cursor: pointer;
 }
 
-.opcao-dificuldade:hover,
-.opcao-tema:hover,
-.opcao-cartas:hover {
+.opcao-dificuldade:hover, .opcao-tema:hover, .opcao-cartas:hover {
     border-color: var(--roxo);
     background: #272746;
 }
 
-.opcao-dificuldade.selecionada,
-.opcao-tema.selecionado,
-.opcao-cartas.selecionada {
+.opcao-dificuldade.selecionada, .opcao-tema.selecionado, .opcao-cartas.selecionada {
     border-color: var(--roxo);
-    background: linear-gradient(145deg, #302958, #222747);
-    box-shadow: inset 0 0 0 1px #7667ff35;
+    background: linear-gradient(145deg, #382f6e, #222b52);
+    box-shadow: 0 0 15px rgba(118, 103, 255, 0.35);
 }
 
 .icone-opcao {
-    font-size: 20px;
+    font-size: 24px;
 }
 
-.opcao-dificuldade strong,
-.opcao-tema strong,
-.opcao-cartas strong {
-    font-size: 14px;
+.opcao-dificuldade strong, .opcao-tema strong, .opcao-cartas strong {
+    font-size: 15px;
 }
 
-.opcao-dificuldade small,
-.opcao-tema small,
-.opcao-cartas small {
+.opcao-dificuldade small, .opcao-tema small, .opcao-cartas small {
     color: var(--texto-secundario);
-    font-size: 11px;
+    font-size: 12px;
     text-align: center;
-}
-
-.opcoes-tema {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 8px;
-}
-
-.opcao-tema {
-    align-items: center;
-    padding: 6px 4px;
 }
 
 .figuras {
     width: 100%;
-    min-height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    padding: 3px;
-    border-radius: 6px;
-    background: #13152a;
-    font-size: 16px;
+    gap: 4px;
+    font-size: 18px;
 }
 
 .area-jogar {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin: 6px 0;
-    flex-wrap: wrap;
+    gap: 16px;
+    margin: 10px 0;
     width: 100%;
 }
 
-#jogar,
-#btn-config-principal {
+#jogar, #btn-config-principal {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-width: 160px;
-    padding: 10px 20px;
-    border-radius: 10px;
+    gap: 10px;
+    min-height: 56px;
+    padding: 0 28px;
+    border-radius: 14px;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px;
     cursor: pointer;
 }
 
@@ -248,64 +224,55 @@ button {
     border: none;
     background: linear-gradient(110deg, var(--roxo), var(--azul));
     color: white;
-}
-
-#jogar:hover {
-    filter: brightness(1.15);
+    box-shadow: 0 6px 20px rgba(118, 103, 255, 0.4);
+    flex: 2;
 }
 
 #btn-config-principal {
     border: 2px solid var(--roxo);
     background: #25284a;
     color: var(--texto);
+    flex: 1;
 }
 
-#btn-config-principal:hover {
-    background: #313563;
-    border-color: var(--azul);
-}
-
-button:focus-visible {
-    outline: 2px solid white;
-    outline-offset: 2px;
-}
-
+/* Área de Jogo Adaptada */
 .cabecalho-jogo {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    padding: 8px 14px;
-    border-radius: 12px;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 14px;
     border: 1px solid var(--borda);
     background: var(--painel);
     width: 100%;
 }
 
 .cabecalho-jogo h2 {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .cabecalho-jogo p {
     color: var(--texto-secundario);
-    font-size: 13px;
-    margin-top: 1px;
+    font-size: 14px;
+    margin-top: 2px;
 }
 
 .acoes-jogo {
     display: flex;
-    gap: 6px;
+    gap: 10px;
 }
 
 .acoes-jogo button {
-    padding: 6px 12px;
-    border-radius: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 10px;
     border: 1px solid var(--borda);
     background: #25284a;
     color: var(--texto);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .acoes-jogo button:hover {
@@ -316,10 +283,9 @@ button:focus-visible {
 .painel-jogo {
     display: flex;
     justify-content: space-around;
-    gap: 10px;
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 12px;
+    gap: 16px;
+    padding: 14px;
+    border-radius: 14px;
     border: 1px solid var(--borda);
     background: var(--painel);
     width: 100%;
@@ -329,28 +295,30 @@ button:focus-visible {
 .painel-jogo div {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
 }
 
 .painel-jogo span {
     color: var(--texto-secundario);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .painel-jogo strong {
-    font-size: 17px;
+    font-size: 20px;
     color: var(--texto);
 }
 
+/* Tabuleiro Fluido Responsivo p/ Tablet */
 .tabuleiro {
     display: grid;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px;
     width: 100%;
-    max-width: 550px;
+    max-width: 680px;
+    margin: 0 auto;
     justify-content: center;
     justify-items: center;
     align-items: center;
+    padding: 10px 0;
 }
 
 .carta {
@@ -363,28 +331,26 @@ button:focus-visible {
     border: none;
     cursor: pointer;
     padding: 0;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.2s ease;
 }
 
-.carta:not(:disabled):hover {
-    transform: translateY(-4px) scale(1.04);
-    z-index: 10;
+.carta:not(:disabled):active {
+    transform: scale(0.95);
 }
 
-.carta .frente-carta,
-.carta .verso-carta {
+.carta .frente-carta, .carta .verso-carta {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 14px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1), box-shadow 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.4, 0.2, 0.2, 1), box-shadow 0.3s ease;
     border: 2px solid var(--borda);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    font-size: clamp(2rem, 6vw, 3.5rem);
 }
 
 .carta .frente-carta {
@@ -403,64 +369,38 @@ button:focus-visible {
 
 .carta.virada .verso-carta {
     transform: rotateY(360deg);
-    box-shadow: 0 0 16px rgba(67, 140, 255, 0.5);
+    box-shadow: 0 0 20px rgba(67, 140, 255, 0.5);
     border-color: var(--azul);
 }
 
 .carta.encontrada .verso-carta {
     background: #1b382b;
     border-color: #2e7d54;
-    box-shadow: 0 0 16px rgba(46, 125, 84, 0.6);
+    box-shadow: 0 0 20px rgba(46, 125, 84, 0.6);
 }
 
 .carta.encontrada-ia .verso-carta {
     background: linear-gradient(135deg, #3a3f58 0%, #202336 100%);
     border-color: #b8c2cc;
-    box-shadow: 0 0 18px rgba(184, 194, 204, 0.65);
+    box-shadow: 0 0 20px rgba(184, 194, 204, 0.65);
     color: #e2e8f0;
 }
 
-.carta.erro .frente-carta,
-.carta.erro .verso-carta {
+.carta.erro .frente-carta, .carta.erro .verso-carta {
     border-color: #ff3333 !important;
     background: #3d1a1a !important;
-    box-shadow: 0 0 16px #ff3333 !important;
-    animation: tremer-forte 0.35s ease-in-out;
+    box-shadow: 0 0 20px #ff3333 !important;
 }
 
-@keyframes tremer-forte {
-    0% {
-        transform: translateX(0) scale(1.03);
-    }
-
-    20% {
-        transform: translateX(-4px) rotate(-4deg);
-    }
-
-    40% {
-        transform: translateX(4px) rotate(4deg);
-    }
-
-    100% {
-        transform: translateX(0) scale(1.03);
-    }
-}
-
-.carta:disabled {
-    cursor: default;
-}
-
-/* TEXTO DO JOGO AUMENTADO E COM CORES DE TURNO */
 #mensagem-jogo {
     text-align: center;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     width: 100%;
-    padding: 4px 0;
+    padding: 8px 0;
     transition: color 0.3s ease;
 }
 
-/* Cores aplicadas via JS conforme o turno */
 .turno-jogador {
     color: var(--azul) !important;
 }
@@ -469,123 +409,106 @@ button:focus-visible {
     color: var(--texto-secundario) !important;
 }
 
-.modal-vitoria,
-.modal-config {
+/* Modais Otimizados para Tablet */
+.modal-vitoria, .modal-config {
     position: fixed;
     inset: 0;
     background: rgba(11, 12, 24, 0.85);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100;
-    padding: 16px;
+    padding: 20px;
 }
 
-.conteudo-vitoria,
-.conteudo-config {
+.conteudo-vitoria, .conteudo-config {
     background: #191a31;
-    border: 1px solid var(--roxo);
-    border-radius: 18px;
-    padding: 24px 20px;
+    border: 2px solid var(--roxo);
+    border-radius: 20px;
+    padding: 30px 24px;
     width: 100%;
-    max-width: 400px;
+    max-width: 460px;
     text-align: center;
-    box-shadow: 0 0 35px rgba(118, 103, 255, 0.4);
-    animation: surgir 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes surgir {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+    box-shadow: 0 0 40px rgba(118, 103, 255, 0.4);
 }
 
 .icone-vitoria {
-    font-size: 45px;
-    margin-bottom: 6px;
+    font-size: 56px;
+    margin-bottom: 10px;
 }
 
-.conteudo-vitoria h2,
-.conteudo-config h2 {
-    font-size: 22px;
-    margin-bottom: 12px;
-    color: var(--texto);
+.conteudo-vitoria h2, .conteudo-config h2 {
+    font-size: 26px;
+    margin-bottom: 14px;
 }
 
 .conteudo-vitoria p {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--texto-secundario);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .config-grupo {
-    margin: 14px 0;
+    margin: 18px 0;
     text-align: left;
 }
 
 .config-grupo label {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: 15px;
     color: var(--texto-secundario);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .config-grupo input[type="range"] {
     width: 100%;
     accent-color: var(--roxo);
     cursor: pointer;
-    height: 6px;
+    height: 10px;
     background: #29264e;
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 .estatisticas-vitoria {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 .stat-box {
     background: #13152a;
     border: 1px solid var(--borda);
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .stat-box span {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--texto-secundario);
 }
 
 .stat-box strong {
-    font-size: 18px;
+    font-size: 20px;
     color: var(--texto);
 }
 
 .botoes-vitoria {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
-.btn-primario,
-.btn-secundario {
-    padding: 12px;
-    border-radius: 8px;
+.btn-primario, .btn-secundario {
+    min-height: 52px;
+    border-radius: 12px;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 17px;
     cursor: pointer;
 }
 
@@ -593,10 +516,7 @@ button:focus-visible {
     background: linear-gradient(110deg, var(--roxo), var(--azul));
     color: white;
     border: none;
-}
-
-.btn-primario:hover {
-    filter: brightness(1.1);
+    box-shadow: 0 4px 15px rgba(118, 103, 255, 0.3);
 }
 
 .btn-secundario {
@@ -605,20 +525,25 @@ button:focus-visible {
     border: 1px solid var(--borda);
 }
 
-.btn-secundario:hover {
-    border-color: var(--roxo);
-    background: #313563;
-}
-
 footer {
-    margin-top: 6px;
+    margin-top: 10px;
     color: #777b9c;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 2px;
     text-align: center;
 }
 
 footer span {
     color: var(--roxo);
-    margin: 0 3px;
+    margin: 0 4px;
+}
+
+/* Ajustes específicos para Tablet (Media Queries) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    html, body {
+        padding: 20px;
+    }
+    .menu, .tela-jogo {
+        max-width: 760px;
+    }
 }
