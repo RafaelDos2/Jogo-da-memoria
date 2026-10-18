@@ -1,185 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jogo da Memória Otimizado para Tablet</title>
+    <title>Jogo da Memória Multiplataforma</title>
     <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <!-- TELA DO MENU -->
-    <main id="tela-menu" class="menu">
-        <header class="cabecalho">
-            <div class="icone-logo">🧠</div>
-            <h1>Jogo da Memória</h1>
-            <p>Treine sua memória e desafie sua inteligência contra a IA.</p>
-        </header>
+    <div class="app-container">
+        <!-- TELA DO MENU -->
+        <main id="tela-menu" class="menu">
+            <header class="cabecalho">
+                <div class="icone-logo">🧠</div>
+                <h1>Jogo da Memória</h1>
+                <p>Treine sua memória e desafie sua inteligência contra a IA.</p>
+            </header>
 
-        <div class="area-jogar">
-            <button id="jogar" class="btn-interativo" type="button">
-                Jogar Agora 🚀
-            </button>
-            <button id="btn-config-principal" class="btn-interativo" type="button">
-                🎵 Som
-            </button>
-        </div>
+            <div class="area-jogar">
+                <button id="jogar" class="btn-interativo" type="button">
+                    Jogar Agora
+                </button>
+                <button id="btn-config-principal" class="btn-interativo" type="button">
+                    🎵 Som
+                </button>
+            </div>
 
-        <!-- 01: DIFICULDADE -->
-        <section class="modulo">
-            <div class="titulo-modulo">
-                <span class="numero">01</span>
+            <!-- 01: DIFICULDADE -->
+            <section class="modulo">
+                <div class="titulo-modulo">
+                    <span class="numero">01</span>
+                    <div>
+                        <h2>Dificuldade</h2>
+                        <p>Escolha o nível do desafio da IA.</p>
+                    </div>
+                </div>
+
+                <div class="opcoes-dificuldade">
+                    <button class="opcao-dificuldade btn-interativo selecionada" data-dificuldade="facil" type="button">
+                        <span class="icone-opcao">🌱</span>
+                        <strong>Fácil</strong>
+                        <small>Iniciante</small>
+                    </button>
+
+                    <button class="opcao-dificuldade btn-interativo" data-dificuldade="normal" type="button">
+                        <span class="icone-opcao">🧩</span>
+                        <strong>Normal</strong>
+                        <small>Equilibrado</small>
+                    </button>
+
+                    <button class="opcao-dificuldade btn-interativo" data-dificuldade="dificil" type="button">
+                        <span class="icone-opcao">🔥</span>
+                        <strong>Difícil</strong>
+                        <small>Avançado</small>
+                    </button>
+
+                    <button class="opcao-dificuldade btn-interativo" data-dificuldade="aleatorio" type="button">
+                        <span class="icone-opcao">🎲</span>
+                        <strong>Aleatório</strong>
+                        <small>Surpresa</small>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 02: TEMAS -->
+            <section class="modulo">
+                <div class="titulo-modulo">
+                    <span class="numero">02</span>
+                    <div>
+                        <h2>Tema das Cartas</h2>
+                        <p>Escolha o conjunto de figuras.</p>
+                    </div>
+                </div>
+
+                <div class="opcoes-tema">
+                    <button class="opcao-tema btn-interativo selecionado" data-tema="emojis" type="button">
+                        <span class="figuras">😀 🚀 🍕</span>
+                        <strong>Emojis</strong>
+                    </button>
+
+                    <button class="opcao-tema btn-interativo" data-tema="animais" type="button">
+                        <span class="figuras">🐶 🐱 🦁</span>
+                        <strong>Animais</strong>
+                    </button>
+
+                    <button class="opcao-tema btn-interativo" data-tema="espaco" type="button">
+                        <span class="figuras">🌍 🌙 🛸</span>
+                        <strong>Espaço</strong>
+                    </button>
+
+                    <button class="opcao-tema btn-interativo" data-tema="comidas" type="button">
+                        <span class="figuras">🍎 🍌 🍔</span>
+                        <strong>Comidas</strong>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 03: QUANTIDADE DE CARTAS -->
+            <section class="modulo">
+                <div class="titulo-modulo">
+                    <span class="numero">03</span>
+                    <div>
+                        <h2>Quantidade de Cartas</h2>
+                        <p>Tamanho do tabuleiro adaptável.</p>
+                    </div>
+                </div>
+
+                <div class="opcoes-cartas">
+                    <button class="opcao-cartas btn-interativo selecionada" data-grid="4" type="button">
+                        <span class="icone-opcao">⭐</span>
+                        <strong>2x2</strong>
+                        <small>4 Cartas</small>
+                    </button>
+
+                    <button class="opcao-cartas btn-interativo" data-grid="12" type="button">
+                        <span class="icone-opcao">🃏</span>
+                        <strong>3x4</strong>
+                        <small>12 Cartas</small>
+                    </button>
+
+                    <button class="opcao-cartas btn-interativo" data-grid="16" type="button">
+                        <span class="icone-opcao">🧩</span>
+                        <strong>4x4</strong>
+                        <small>16 Cartas</small>
+                    </button>
+
+                    <button class="opcao-cartas btn-interativo" data-grid="20" type="button">
+                        <span class="icone-opcao">🎯</span>
+                        <strong>4x5</strong>
+                        <small>20 Cartas</small>
+                    </button>
+
+                    <button class="opcao-cartas btn-interativo" data-grid="36" type="button">
+                        <span class="icone-opcao">🧠</span>
+                        <strong>6x6</strong>
+                        <small>36 Cartas</small>
+                    </button>
+                </div>
+            </section>
+
+            <footer>
+                JOGO DA MEMÓRIA <span>•</span> MULTIPLATAFORMA <span>•</span> SENAC
+            </footer>
+        </main>
+
+        <!-- TELA DO JOGO -->
+        <section id="tela-jogo" class="tela-jogo escondido">
+            <header class="cabecalho-jogo">
                 <div>
-                    <h2>Dificuldade</h2>
-                    <p>Escolha o nível do desafio da IA.</p>
+                    <h2>Jogo da Memória</h2>
+                    <p id="dificuldade-atual">Fácil • Emojis</p>
+                </div>
+
+                <div class="acoes-jogo">
+                    <button id="btn-config-jogo" class="btn-interativo" type="button" title="Configurações">⚙️
+                        Áudio</button>
+                    <button id="reiniciar" class="btn-interativo" type="button">🔄 Reiniciar</button>
+                    <button id="voltar-menu" class="btn-interativo" type="button">⬅️ Menu</button>
+                </div>
+            </header>
+
+            <div class="painel-jogo">
+                <div>
+                    <span>Pares</span>
+                    <strong id="pares-encontrados">0 / 2</strong>
+                </div>
+
+                <div>
+                    <span>🧑 Jogador</span>
+                    <strong id="pontos-jogador">0</strong>
+                </div>
+
+                <div>
+                    <span>🤖 IA</span>
+                    <strong id="pontos-ia">0</strong>
                 </div>
             </div>
 
-            <div class="opcoes-dificuldade">
-                <button class="opcao-dificuldade btn-interativo selecionada" data-dificuldade="facil" type="button">
-                    <span class="icone-opcao">🌱</span>
-                    <strong>Fácil</strong>
-                    <small>Iniciante</small>
-                </button>
-
-                <button class="opcao-dificuldade btn-interativo" data-dificuldade="normal" type="button">
-                    <span class="icone-opcao">🧩</span>
-                    <strong>Normal</strong>
-                    <small>Equilibrado</small>
-                </button>
-
-                <button class="opcao-dificuldade btn-interativo" data-dificuldade="dificil" type="button">
-                    <span class="icone-opcao">🔥</span>
-                    <strong>Difícil</strong>
-                    <small>Avançado</small>
-                </button>
-
-                <button class="opcao-dificuldade btn-interativo" data-dificuldade="aleatorio" type="button">
-                    <span class="icone-opcao">🎲</span>
-                    <strong>Aleatório</strong>
-                    <small>Surpresa</small>
-                </button>
+            <div class="container-tabuleiro">
+                <div id="tabuleiro" class="tabuleiro"></div>
             </div>
+
+            <p id="mensagem-jogo" class="turno-jogador">Sua vez! Encontre um par.</p>
         </section>
-
-        <!-- 02: TEMAS -->
-        <section class="modulo">
-            <div class="titulo-modulo">
-                <span class="numero">02</span>
-                <div>
-                    <h2>Tema das Cartas</h2>
-                    <p>Escolha o conjunto de figuras.</p>
-                </div>
-            </div>
-
-            <div class="opcoes-tema">
-                <button class="opcao-tema btn-interativo selecionado" data-tema="emojis" type="button">
-                    <span class="figuras">😀 🚀 🍕</span>
-                    <strong>Emojis</strong>
-                </button>
-
-                <button class="opcao-tema btn-interativo" data-tema="animais" type="button">
-                    <span class="figuras">🐶 🐱 🦁</span>
-                    <strong>Animais</strong>
-                </button>
-
-                <button class="opcao-tema btn-interativo" data-tema="espaco" type="button">
-                    <span class="figuras">🌍 🌙 🛸</span>
-                    <strong>Espaço</strong>
-                </button>
-
-                <button class="opcao-tema btn-interativo" data-tema="comidas" type="button">
-                    <span class="figuras">🍎 🍌 🍔</span>
-                    <strong>Comidas</strong>
-                </button>
-            </div>
-        </section>
-
-        <!-- 03: QUANTIDADE DE CARTAS -->
-        <section class="modulo">
-            <div class="titulo-modulo">
-                <span class="numero">03</span>
-                <div>
-                    <h2>Quantidade de Cartas</h2>
-                    <p>Tamanho do tabuleiro adaptado para tablet.</p>
-                </div>
-            </div>
-
-            <div class="opcoes-cartas">
-                <button class="opcao-cartas btn-interativo selecionada" data-grid="4" type="button">
-                    <span class="icone-opcao">⭐</span>
-                    <strong>2x2</strong>
-                    <small>4 Cartas</small>
-                </button>
-
-                <button class="opcao-cartas btn-interativo" data-grid="12" type="button">
-                    <span class="icone-opcao">🃏</span>
-                    <strong>3x4</strong>
-                    <small>12 Cartas</small>
-                </button>
-
-                <button class="opcao-cartas btn-interativo" data-grid="16" type="button">
-                    <span class="icone-opcao">🧩</span>
-                    <strong>4x4</strong>
-                    <small>16 Cartas</small>
-                </button>
-
-                <button class="opcao-cartas btn-interativo" data-grid="20" type="button">
-                    <span class="icone-opcao">🎯</span>
-                    <strong>4x5</strong>
-                    <small>20 Cartas</small>
-                </button>
-
-                <button class="opcao-cartas btn-interativo" data-grid="36" type="button">
-                    <span class="icone-opcao">🧠</span>
-                    <strong>6x6</strong>
-                    <small>36 Cartas</small>
-                </button>
-            </div>
-        </section>
-
-        <footer>
-            JOGO DA MEMÓRIA <span>•</span> TABLET EDITION <span>•</span> SENAC
-        </footer>
-    </main>
-
-    <!-- TELA DO JOGO -->
-    <section id="tela-jogo" class="tela-jogo escondido">
-        <header class="cabecalho-jogo">
-            <div>
-                <h2>Jogo da Memória</h2>
-                <p id="dificuldade-atual">Fácil • Emojis</p>
-            </div>
-
-            <div class="acoes-jogo">
-                <button id="btn-config-jogo" class="btn-interativo" type="button" title="Configurações">⚙️ Áudio</button>
-                <button id="reiniciar" class="btn-interativo" type="button">🔄 Reiniciar</button>
-                <button id="voltar-menu" class="btn-interativo" type="button">⬅️ Menu</button>
-            </div>
-        </header>
-
-        <div class="painel-jogo">
-            <div>
-                <span>Pares</span>
-                <strong id="pares-encontrados">0 / 2</strong>
-            </div>
-
-            <div>
-                <span>🧑 Jogador</span>
-                <strong id="pontos-jogador">0</strong>
-            </div>
-
-            <div>
-                <span>🤖 IA</span>
-                <strong id="pontos-ia">0</strong>
-            </div>
-        </div>
-
-        <div id="tabuleiro" class="tabuleiro"></div>
-
-        <p id="mensagem-jogo" class="turno-jogador">Sua vez! Encontre um par.</p>
-    </section>
+    </div>
 
     <!-- TELA DE CONFIGURAÇÕES (MODAL) -->
     <div id="modal-config" class="modal-config escondido">
@@ -187,25 +194,25 @@
             <h2>🎵 Configuração de Áudio</h2>
 
             <div class="config-grupo">
-                <label for="volume-musica">Trilha Sonora: <span id="val-musica">50%</span></label>
-                <input type="range" id="volume-musica" min="0" max="100" value="50">
+                <label for="volume-musica">Trilha Sonora: <span id="val-musica">70%</span></label>
+                <input type="range" id="volume-musica" min="0" max="100" value="70">
             </div>
 
             <div class="config-grupo">
-                <label for="volume-sfx">Efeitos Sonoros: <span id="val-sfx">50%</span></label>
-                <input type="range" id="volume-sfx" min="0" max="100" value="50">
+                <label for="volume-sfx">Efeitos Sonoros: <span id="val-sfx">70%</span></label>
+                <input type="range" id="volume-sfx" min="0" max="100" value="70">
             </div>
 
-            <div class="botoes-vitoria" style="margin-top: 24px;">
+            <div class="botoes-vitoria" style="margin-top: 20px;">
                 <button id="fechar-config" class="btn-interativo btn-primario" type="button">Salvar e Fechar</button>
             </div>
         </div>
     </div>
 
-    <!-- TELA DE VITÓRIA -->
+    <!-- TELA DE VITÓRIA / FINAL -->
     <div id="tela-vitoria" class="modal-vitoria escondido">
         <div class="conteudo-vitoria">
-            <div class="icone-vitoria">🏆</div>
+            <div id="icone-vitoria" class="icone-vitoria">🏆</div>
             <h2 id="titulo-vitoria">Parabéns! Você Venceu!</h2>
             <p id="subtitulo-vitoria">Você completou o desafio com sucesso.</p>
 
@@ -237,4 +244,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
