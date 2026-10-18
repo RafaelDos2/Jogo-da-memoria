@@ -10,6 +10,7 @@ const elementoPontosJogador = document.getElementById("pontos-jogador");
 const elementoPontosIA = document.getElementById("pontos-ia");
 const mensagemJogo = document.getElementById("mensagem-jogo");
 
+const iconeVitoria = document.getElementById("icone-vitoria");
 const tituloVitoria = document.getElementById("titulo-vitoria");
 const subtituloVitoria = document.getElementById("subtitulo-vitoria");
 const statTotalCartas = document.getElementById("stat-total-cartas");
@@ -29,7 +30,9 @@ const fecharConfig = document.getElementById("fechar-config");
 const rangeMusica = document.getElementById("volume-musica");
 const rangeSfx = document.getElementById("volume-sfx");
 const valMusica = document.getElementById("val-musica");
+valMusica.textContent = `${rangeMusica.value}%`;
 const valSfx = document.getElementById("val-sfx");
+valSfx.textContent = `${rangeSfx.value}%`;
 
 const botoesDificuldade = document.querySelectorAll(".opcao-dificuldade");
 const botoesTema = document.querySelectorAll(".opcao-tema");
@@ -49,11 +52,9 @@ let pontosIA = 0;
 let turno = "jogador";
 let bloqueado = false;
 let partidaEncerrada = false;
-let tempoDeEspera = null;
 
-// IA Memory Mapping
+// IA Memory Map
 let memoriaIA = new Map();
-let cartasConhecidasIA = new Set();
 
 // Áudio Web Audio API
 let audioCtx = null;
@@ -74,7 +75,7 @@ function inicializarAudio() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         gainMusica = audioCtx.createGain();
-        gainMusica.gain.value = Number(rangeMusica.value) / 100 * 0.7;
+        gainMusica.gain.value = (Number(rangeMusica.value) / 100) * 0.5;
         gainMusica.connect(audioCtx.destination);
 
         gainSfx = audioCtx.createGain();
@@ -106,15 +107,15 @@ function iniciarTrilhaSonora() {
     ];
 
     timerMusica = setInterval(() => {
-        if (!audioCtx || audioCtx.state !== "running") return;
+        if (!audioCtx || audioCtx.state !== "running" || partidaEncerrada) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
 
-        osc.type = "square";
+        osc.type = "sine";
         const nota = trilhaJogo[passoRitmo % trilhaJogo.length];
         osc.frequency.setValueAtTime(nota, audioCtx.currentTime);
 
-        const volAtual = (Number(rangeMusica.value) / 100) * 0.1;
+        const volAtual = (Number(rangeMusica.value) / 100) * 0.08;
         gain.gain.setValueAtTime(volAtual, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
 
@@ -124,7 +125,7 @@ function iniciarTrilhaSonora() {
         osc.start();
         osc.stop(audioCtx.currentTime + 0.18);
         passoRitmo++;
-    }, 180);
+    }, 220);
 }
 
 function tocarSomClique() {
@@ -193,7 +194,63 @@ function tocarSomErro() {
     osc.stop(audioCtx.currentTime + 0.2);
 }
 
-// Configuração de Event Listeners de Menu e Jogo
+function tocarSomVitoriaJogador() {
+    inicializarAudio();
+    if (!audioCtx) return;
+    const volumeBase = Number(rangeSfx.value) / 100;
+    const notas = [
+        { freq: 523.25, tempo: 0.0, dur: 0.15 },
+        { freq: 659.25, tempo: 0.15, dur: 0.15 },
+        { freq: 783.99, tempo: 0.30, dur: 0.15 },
+        { freq: 1046.50, tempo: 0.45, dur: 0.50 }
+    ];
+
+    notas.forEach(n => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(n.freq, audioCtx.currentTime + n.tempo);
+        gain.gain.setValueAtTime(volumeBase * 0.3, audioCtx.currentTime + n.tempo);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + n.tempo + n.dur);
+        osc.connect(gain);
+        gain.connect(gainSfx);
+        osc.start(audioCtx.currentTime + n.tempo);
+        osc.stop(audioCtx.currentTime + n.tempo + n.dur);
+    });
+}
+
+function tocarSomVitoriaIA() {
+    inicializarAudio();
+    if (!audioCtx) return;
+    const volumeBase = Number(rangeSfx.value) / 100;
+    const notas = [
+        { freq: 392.00, tempo: 0.0, dur: 0.25 },
+        { freq: 349.23, tempo: 0.25, dur: 0.25 },
+        { freq: 329.63, tempo: 0.50, dur: 0.25 },
+        { freq: 261.63, tempo: 0.75, dur: 0.60 }
+    ];
+
+    notas.forEach(n => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(n.freq, audioCtx.currentTime + n.tempo);
+        gain.gain.setValueAtTime(volumeBase * 0.25, audioCtx.currentTime + n.tempo);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + n.tempo + n.dur);
+        osc.connect(gain);
+        gain.connect(gainSfx);
+        osc.start(audioCtx.currentTime + n.tempo);
+        osc.stop(audioCtx.currentTime + n.tempo + n.dur);
+    });
+}
+
+function soltarConfetes() {
+    if (typeof confetti !== "function") return;
+    confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+    setTimeout(() => confetti({ particleCount: 80, spread: 100, origin: { y: 0.6 } }), 400);
+}
+
+// Botoes do menu
 botoesDificuldade.forEach(btn => {
     btn.addEventListener("click", () => {
         tocarSomClique();
@@ -217,341 +274,260 @@ botoesGrid.forEach(btn => {
         tocarSomClique();
         botoesGrid.forEach(b => b.classList.remove("selecionada"));
         btn.classList.add("selecionada");
-        gridTamanho = Number(btn.dataset.grid);
+        gridTamanho = parseInt(btn.dataset.grid);
     });
 });
 
 rangeMusica.addEventListener("input", (e) => {
-    valMusica.innerText = `${e.target.value}%`;
-    if (gainMusica && audioCtx) {
-        gainMusica.gain.value = (Number(e.target.value) / 100) * 0.7;
-    }
+    valMusica.textContent = `${e.target.value}%`;
+    if (gainMusica) gainMusica.gain.value = (Number(e.target.value) / 100) * 0.5;
 });
 
 rangeSfx.addEventListener("input", (e) => {
-    valSfx.innerText = `${e.target.value}%`;
-    if (gainSfx && audioCtx) {
-        gainSfx.gain.value = Number(e.target.value) / 100;
-    }
+    valSfx.textContent = `${e.target.value}%`;
+    if (gainSfx) gainSfx.gain.value = Number(e.target.value) / 100;
 });
 
-btnConfigPrincipal.addEventListener("click", () => {
-    tocarSomClique();
-    modalConfig.classList.remove("escondido");
-});
+btnConfigPrincipal.addEventListener("click", () => { tocarSomClique(); modalConfig.classList.remove("escondido"); });
+btnConfigJogo.addEventListener("click", () => { tocarSomClique(); modalConfig.classList.remove("escondido"); });
+fecharConfig.addEventListener("click", () => { tocarSomClique(); modalConfig.classList.add("escondido"); });
 
-btnConfigJogo.addEventListener("click", () => {
-    tocarSomClique();
-    modalConfig.classList.remove("escondido");
-});
+botaoJogar.addEventListener("click", iniciarJogo);
+botaoReiniciar.addEventListener("click", () => { tocarSomClique(); iniciarJogo(); });
+botaoVoltar.addEventListener("click", () => { tocarSomClique(); voltarAoMenu(); });
+botaoJogarNovamente.addEventListener("click", () => { tocarSomClique(); telaVitoria.classList.add("escondido"); iniciarJogo(); });
+botaoIrParaMenu.addEventListener("click", () => { tocarSomClique(); telaVitoria.classList.add("escondido"); voltarAoMenu(); });
 
-fecharConfig.addEventListener("click", () => {
-    tocarSomClique();
-    modalConfig.classList.add("escondido");
-});
-
-botaoVoltar.addEventListener("click", () => {
-    tocarSomClique();
+function voltarAoMenu() {
     telaJogo.classList.add("escondido");
     telaMenu.classList.remove("escondido");
-});
-
-botaoIrParaMenu.addEventListener("click", () => {
-    tocarSomClique();
-    telaVitoria.classList.add("escondido");
-    telaJogo.classList.add("escondido");
-    telaMenu.classList.remove("escondido");
-});
-
-botaoJogar.addEventListener("click", () => {
-    tocarSomClique();
-    iniciarJogo();
-});
-
-botaoReiniciar.addEventListener("click", () => {
-    tocarSomClique();
-    iniciarJogo();
-});
-
-botaoJogarNovamente.addEventListener("click", () => {
-    tocarSomClique();
-    telaVitoria.classList.add("escondido");
-    iniciarJogo();
-});
+    partidaEncerrada = true;
+}
 
 function iniciarJogo() {
-    telaMenu.classList.add("escondido");
-    telaJogo.classList.remove("escondido");
-
+    inicializarAudio();
+    partidaEncerrada = false;
     cartasViradas = [];
     paresEncontrados = 0;
     pontosJogador = 0;
     pontosIA = 0;
     turno = "jogador";
     bloqueado = false;
-    partidaEncerrada = false;
     memoriaIA.clear();
-    cartasConhecidasIA.clear();
-
-    if (tempoDeEspera) clearTimeout(tempoDeEspera);
 
     totalCelulasPartida = gridTamanho;
     totalParesDaPartida = totalCelulasPartida / 2;
 
-    elementoPares.innerText = `0 / ${totalParesDaPartida}`;
-    elementoPontosJogador.innerText = "0";
-    elementoPontosIA.innerText = "0";
-    
-    let nomeDif = dificuldadeEscolhida.toUpperCase();
-    let nomeTema = temaEscolhido.toUpperCase();
-    elementoDificuldade.innerText = `${nomeDif} • ${nomeTema}`;
+    elementoPares.textContent = `0 / ${totalParesDaPartida}`;
+    elementoPontosJogador.textContent = "0";
+    elementoPontosIA.textContent = "0";
 
-    montarTabuleiro();
+    let difTexto = dificuldadeEscolhida.charAt(0).toUpperCase() + dificuldadeEscolhida.slice(1);
+    if (dificuldadeEscolhida === "aleatorio") {
+        const niveis = ["facil", "normal", "dificil"];
+        dificuldadeEscolhida = niveis[Math.floor(Math.random() * niveis.length)];
+        difTexto = "Surpresa (" + dificuldadeEscolhida + ")";
+    }
+
+    elementoDificuldade.textContent = `${difTexto} • ${temaEscolhido.charAt(0).toUpperCase() + temaEscolhido.slice(1)}`;
+    mensagemJogo.textContent = "Sua vez! Encontre um par.";
+    mensagemJogo.className = "turno-jogador";
+
+    configurarGradeEGerarCartas();
+
+    telaMenu.classList.add("escondido");
+    telaJogo.classList.remove("escondido");
 }
 
-function montarTabuleiro() {
+function configurarGradeEGerarCartas() {
     tabuleiro.innerHTML = "";
-    
-    let colunas = 2;
-    if (gridTamanho === 12) colunas = 4;
-    else if (gridTamanho === 16) colunas = 4;
-    else if (gridTamanho === 20) colunas = 5;
-    else if (gridTamanho === 36) colunas = 6;
-    else if (gridTamanho === 4) colunas = 2;
 
-    tabuleiro.style.gridTemplateColumns = `repeat(${colunas}, minmax(0, 1fr))`;
+    let colunas = 4;
+    let linhas = 4;
 
-    let figurasPool = [...temasFiguras[temaEscolhido]];
-    figurasPool.sort(() => Math.random() - 0.5);
-    let figurasSelecionadas = figurasPool.slice(0, totalParesDaPartida);
-    let cartasEmbaralhadas = [...figurasSelecionadas, ...figurasSelecionadas];
-    cartasEmbaralhadas.sort(() => Math.random() - 0.5);
+    if (totalCelulasPartida === 4) { colunas = 2; linhas = 2; }
+    else if (totalCelulasPartida === 12) { colunas = 4; linhas = 3; }
+    else if (totalCelulasPartida === 16) { colunas = 4; linhas = 4; }
+    else if (totalCelulasPartida === 20) { colunas = 5; linhas = 4; }
+    else if (totalCelulasPartida === 36) { colunas = 6; linhas = 6; }
 
-    cartasEmbaralhadas.forEach((figura, indice) => {
+    document.documentElement.style.setProperty('--colunas', colunas);
+    document.documentElement.style.setProperty('--linhas', linhas);
+
+    const listaSimbolos = temasFiguras[temaEscolhido] || temasFiguras.emojis;
+    let figurasSelecionadas = listaSimbolos.slice(0, totalParesDaPartida);
+    let baralho = [...figurasSelecionadas, ...figurasSelecionadas];
+
+    baralho.sort(() => Math.random() - 0.5);
+
+    baralho.forEach((simbolo, i) => {
         const btnCarta = document.createElement("button");
-        btnCarta.classList.add("carta");
         btnCarta.type = "button";
-        btnCarta.dataset.figura = figura;
-        btnCarta.dataset.indice = indice;
+        btnCarta.classList.add("carta");
+        btnCarta.dataset.index = i;
+        btnCarta.dataset.valor = simbolo;
 
-        const frente = document.createElement("div");
-        frente.classList.add("frente-carta");
-        frente.innerHTML = "❓";
+        btnCarta.innerHTML = `
+            <div class="frente-carta">❓</div>
+            <div class="verso-carta">${simbolo}</div>
+        `;
 
-        const verso = document.createElement("div");
-        verso.classList.add("verso-carta");
-        verso.innerHTML = figura;
-
-        btnCarta.appendChild(frente);
-        btnCarta.appendChild(verso);
-
-        btnCarta.addEventListener("click", () => {
-            if (turno === "jogador") {
-                virarCarta(btnCarta);
-            }
-        });
-
+        btnCarta.addEventListener("click", () => aoClicarNaCarta(btnCarta));
         tabuleiro.appendChild(btnCarta);
     });
-
-    atualizarMensagem();
 }
 
-function virarCarta(carta) {
-    if (bloqueado || partidaEncerrada) return;
+function aoClicarNaCarta(carta) {
+    if (bloqueado || turno !== "jogador") return;
     if (carta.classList.contains("virada") || carta.classList.contains("encontrada")) return;
-    if (cartasViradas.includes(carta)) return;
 
-    tocarSomVirar();
-    carta.classList.add("virada");
-    cartasViradas.push(carta);
-
-    let indice = carta.dataset.indice;
-    let figura = carta.dataset.figura;
-    memoriaIA.set(indice, figura);
-    cartasConhecidasIA.add(indice);
+    virarCarta(carta);
 
     if (cartasViradas.length === 2) {
+        bloqueado = true;
         verificarPar();
     }
 }
 
-function verificarPar() {
-    bloqueado = true;
-    const [carta1, carta2] = cartasViradas;
-    const fig1 = carta1.dataset.figura;
-    const fig2 = carta2.dataset.figura;
+function virarCarta(carta) {
+    tocarSomVirar();
+    carta.classList.add("virada");
+    cartasViradas.push(carta);
 
-    if (fig1 === fig2) {
+    const idx = carta.dataset.index;
+    const val = carta.dataset.valor;
+    memoriaIA.set(idx, val);
+}
+
+function verificarPar() {
+    const [c1, c2] = cartasViradas;
+    const v1 = c1.dataset.valor;
+    const v2 = c2.dataset.valor;
+
+    if (v1 === v2) {
         tocarSomAcerto();
-        carta1.classList.add(turno === "jogador" ? "encontrada" : "encontrada-ia");
-        carta2.classList.add(turno === "jogador" ? "encontrada" : "encontrada-ia");
-        
-        paresEncontrados++;
-        elementoPares.innerText = `${paresEncontrados} / ${totalParesDaPartida}`;
+        c1.classList.add(turno === "jogador" ? "encontrada" : "encontrada-ia");
+        c2.classList.add(turno === "jogador" ? "encontrada" : "encontrada-ia");
 
         if (turno === "jogador") {
             pontosJogador += 10;
-            elementoPontosJogador.innerText = pontosJogador;
+            elementoPontosJogador.textContent = pontosJogador;
         } else {
             pontosIA += 10;
-            elementoPontosIA.innerText = pontosIA;
+            elementoPontosIA.textContent = pontosIA;
         }
 
+        paresEncontrados++;
+        elementoPares.textContent = `${paresEncontrados} / ${totalParesDaPartida}`;
+
+        memoriaIA.delete(c1.dataset.index);
+        memoriaIA.delete(c2.dataset.index);
         cartasViradas = [];
-        bloqueado = false;
 
         if (paresEncontrados === totalParesDaPartida) {
             finalizarPartida();
-        } else if (turno === "ia") {
-            tempoDeEspera = setTimeout(executarTurnoIA, 800);
+        } else {
+            bloqueado = false;
+            if (turno === "ia") {
+                setTimeout(jogadaIA, 800);
+            }
         }
     } else {
         tocarSomErro();
-        carta1.classList.add("erro");
-        carta2.classList.add("erro");
+        c1.classList.add("erro");
+        c2.classList.add("erro");
 
-        tempoDeEspera = setTimeout(() => {
-            carta1.classList.remove("virada", "erro");
-            carta2.classList.remove("virada", "erro");
+        setTimeout(() => {
+            c1.classList.remove("virada", "erro");
+            c2.classList.remove("virada", "erro");
             cartasViradas = [];
-            bloqueado = false;
 
-            turno = turno === "jogador" ? "ia" : "jogador";
-            atualizarMensagem();
-
-            if (turno === "ia") {
-                tempoDeEspera = setTimeout(executarTurnoIA, 1000);
+            if (turno === "jogador") {
+                turno = "ia";
+                mensagemJogo.textContent = "Vez da Inteligência Artificial...";
+                mensagemJogo.className = "turno-ia";
+                bloqueado = true;
+                setTimeout(jogadaIA, 1000);
+            } else {
+                turno = "jogador";
+                mensagemJogo.textContent = "Sua vez! Encontre um par.";
+                mensagemJogo.className = "turno-jogador";
+                bloqueado = false;
             }
-        }, 900);
+        }, 1000);
     }
 }
 
-function atualizarMensagem() {
-    if (turno === "jogador") {
-        mensagemJogo.innerText = "Sua vez! Encontre um par.";
-        mensagemJogo.className = "turno-jogador";
-    } else {
-        mensagemJogo.innerText = "Vez da IA pensando...";
-        mensagemJogo.className = "turno-ia";
-    }
-}
+function jogadaIA() {
+    if (partidaEncerrada || turno !== "ia") return;
 
-function executarTurnoIA() {
-    if (partidaEncerrada) return;
-
-    let cartasDisponiveis = Array.from(document.querySelectorAll(".carta:not(.virada):not(.encontrada):not(.encontrada-ia)"));
+    const cartasDisponiveis = Array.from(document.querySelectorAll(".carta:not(.virada):not(.encontrada)"));
     if (cartasDisponiveis.length === 0) return;
 
-    let cartaEscolhida1 = null;
-    let cartaEscolhida2 = null;
+    let c1, c2;
 
-    // Lógica da IA baseada na dificuldade
-    if (dificuldadeEscolhida !== "facil") {
-        // Tenta achar par na memória conhecida
-        let mapaInverso = new Map();
-        for (let [idx, fig] of memoriaIA.entries()) {
-            let el = document.querySelector(`.carta[data-indice='${idx}']`);
-            if (el && !el.classList.contains("encontrada") && !el.classList.contains("encontrada-ia") && !el.classList.contains("virada")) {
-                if (!mapaInverso.has(fig)) mapaInverso.set(fig, []);
-                mapaInverso.get(fig).push(el);
-            }
-        }
+    let parEncontradoNaMemoria = false;
+    const contagem = {};
 
-        for (let [fig, lista] of mapaInverso.entries()) {
-            if (lista.length >= 2) {
-                if (dificuldadeEscolhida === "dificil" || (dificuldadeEscolhida === "aleatorio" && Math.random() < 0.8) || (dificuldadeEscolhida === "normal" && Math.random() < 0.5)) {
-                    cartaEscolhida1 = lista[0];
-                    cartaEscolhida2 = lista[1];
+    for (let [idx, val] of memoriaIA.entries()) {
+        const elem = document.querySelector(`.carta[data-index="${idx}"]`);
+        if (elem && !elem.classList.contains("encontrada")) {
+            if (!contagem[val]) contagem[val] = [];
+            contagem[val].push(elem);
+            if (contagem[val].length === 2) {
+                let taxaAcerto = 0.4;
+                if (dificuldadeEscolhida === "normal") taxaAcerto = 0.7;
+                if (dificuldadeEscolhida === "dificil") taxaAcerto = 0.95;
+
+                if (Math.random() < taxaAcerto) {
+                    [c1, c2] = contagem[val];
+                    parEncontradoNaMemoria = true;
                     break;
                 }
             }
         }
     }
 
-    if (!cartaEscolhida1) {
-        cartaEscolhida1 = cartasDisponiveis[Math.floor(Math.random() * cartasDisponiveis.length)];
+    if (!parEncontradoNaMemoria) {
+        c1 = cartasDisponiveis[Math.floor(Math.random() * cartasDisponiveis.length)];
+        let cartasRestantes = cartasDisponiveis.filter(c => c !== c1);
+        c2 = cartasRestantes[Math.floor(Math.random() * cartasRestantes.length)];
     }
 
-    virarCartaIA(cartaEscolhida1, () => {
+    virarCarta(c1);
+
+    setTimeout(() => {
         if (partidaEncerrada) return;
-
-        // Se encontrou a primeira, checa se tem par na memória para a segunda
-        if (!cartaEscolhida2) {
-            let fig1 = cartaEscolhida1.dataset.figura;
-            let idx1 = cartaEscolhida1.dataset.indice;
-
-            for (let [idx, fig] of memoriaIA.entries()) {
-                if (idx !== idx1 && fig === fig1) {
-                    let el = document.querySelector(`.carta[data-indice='${idx}']`);
-                    if (el && !el.classList.contains("encontrada") && !el.classList.contains("encontrada-ia") && !el.classList.contains("virada")) {
-                        if (dificuldadeEscolhida === "dificil" || (dificuldadeEscolhida === "aleatorio" && Math.random() < 0.8) || (dificuldadeEscolhida === "normal" && Math.random() < 0.5)) {
-                            cartaEscolhida2 = el;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!cartaEscolhida2) {
-            let restantes = cartasDisponiveis.filter(c => c !== cartaEscolhida1);
-            cartaEscolhida2 = restantes[Math.floor(Math.random() * restantes.length)];
-        }
-
-        setTimeout(() => {
-            virarCartaIA(cartaEscolhida2, () => {});
-        }, 700);
-    });
-}
-
-function virarCartaIA(carta, callback) {
-    if (partidaEncerrada) return;
-    tocarSomVirar();
-    carta.classList.add("virada");
-    cartasViradas.push(carta);
-
-    let indice = carta.dataset.indice;
-    let figura = carta.dataset.figura;
-    memoriaIA.set(indice, figura);
-    cartasConhecidasIA.add(indice);
-
-    if (cartasViradas.length === 2) {
+        virarCarta(c2);
         verificarPar();
-    }
-    if (callback) callback();
+    }, 700);
 }
 
 function finalizarPartida() {
     partidaEncerrada = true;
-    if (timerMusica) {
-        clearInterval(timerMusica);
-        timerMusica = null;
-    }
+    statTotalCartas.textContent = totalCelulasPartida;
+    statPares.textContent = `${paresEncontrados} / ${totalParesDaPartida}`;
+    statPtsJogador.textContent = pontosJogador;
+    statPtsIA.textContent = pontosIA;
 
-    statTotalCartas.innerText = totalCelulasPartida;
-    statPares.innerText = `${paresEncontrados} / ${totalParesDaPartida}`;
-    statPtsJogador.innerText = pontosJogador;
-    statPtsIA.innerText = pontosIA;
-
-    if (pontosJogador > pontosIA) {
-        tituloVitoria.innerText = "Parabéns! Você Venceu!";
-        subtituloVitoria.innerText = "Sua memória superou a inteligência artificial.";
-    } else if (pontosJogador < pontosIA) {
-        tituloVitoria.innerText = "A IA Venceu!";
-        subtituloVitoria.innerText = "Não desanime, tente novamente!";
-    } else {
-        tituloVitoria.innerText = "Empate!";
-        subtituloVitoria.innerText = "Foi uma disputa acirrada!";
-    }
-
-    telaVitoria.classList.remove("escondido");
-
-    if (window.confetti) {
-        confetti({
-            particleCount: 120,
-            spread: 80,
-            origin: { y: 0.6 }
-        });
-    }
+    setTimeout(() => {
+        if (pontosJogador > pontosIA) {
+            iconeVitoria.textContent = "🏆";
+            tituloVitoria.textContent = "Parabéns! Você Venceu!";
+            subtituloVitoria.textContent = "Você superou a Inteligência Artificial!";
+            tocarSomVitoriaJogador();
+            soltarConfetes();
+        } else if (pontosIA > pontosJogador) {
+            iconeVitoria.textContent = "🤖";
+            tituloVitoria.textContent = "A IA Venceu!";
+            subtituloVitoria.textContent = "Não desista! Tente novamente.";
+            tocarSomVitoriaIA();
+        } else {
+            iconeVitoria.textContent = "🤝";
+            tituloVitoria.textContent = "Empate!";
+            subtituloVitoria.textContent = "Foi uma disputa muito acirrada!";
+            tocarSomVitoriaJogador();
+        }
+        telaVitoria.classList.remove("escondido");
+    }, 600);
 }
