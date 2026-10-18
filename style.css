@@ -24,7 +24,7 @@ body {
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    overflow: hidden;
+    overflow: hidden; /* TRAVA A PÁGINA PARA NUNCA TER ROLAGEM */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,15 +42,17 @@ button {
     display: none !important;
 }
 
+/* CONTAINER PRINCIPAL TRAVADO NA TELA */
 .app-container {
-    width: 100%;
-    height: 100%;
-    max-width: 880px;
-    max-height: 1000px;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 750px;
+    max-height: 900px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px 14px;
+    padding: 8px 12px;
 }
 
 .menu {
@@ -58,8 +60,7 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 6px;
-    overflow-y: auto;
+    gap: 4px;
 }
 
 .cabecalho {
@@ -67,34 +68,33 @@ button {
 }
 
 .icone-logo {
-    width: clamp(38px, 5vh, 46px);
-    height: clamp(38px, 5vh, 46px);
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 3px;
+    margin: 0 auto 2px;
     border: 2px solid #6659c9;
-    border-radius: 12px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #332c6e, #263f78);
-    font-size: clamp(18px, 3.5vh, 24px);
-    box-shadow: 0 3px 12px rgba(118, 103, 255, 0.3);
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(118, 103, 255, 0.3);
 }
 
 .cabecalho h1 {
-    font-size: clamp(20px, 3.2vw, 28px);
+    font-size: clamp(18px, 2.5vw, 24px);
     letter-spacing: -0.5px;
 }
 
 .cabecalho p {
     color: var(--texto-secundario);
-    font-size: clamp(11px, 1.6vw, 14px);
+    font-size: clamp(11px, 1.5vw, 13px);
 }
 
 .area-jogar {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin: 2px 0;
+    gap: 10px;
     width: 100%;
 }
 
@@ -103,12 +103,12 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    height: clamp(44px, 6.2vh, 52px);
-    padding: 0 20px;
-    border-radius: 12px;
+    gap: 6px;
+    height: clamp(38px, 5.5vh, 46px);
+    padding: 0 16px;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: clamp(14px, 2vw, 18px);
+    font-size: clamp(13px, 1.8vw, 16px);
     cursor: pointer;
 }
 
@@ -116,7 +116,7 @@ button {
     border: none;
     background: linear-gradient(110deg, var(--roxo), var(--azul));
     color: white;
-    box-shadow: 0 4px 15px rgba(118, 103, 255, 0.4);
+    box-shadow: 0 3px 12px rgba(118, 103, 255, 0.4);
     flex: 2;
 }
 
@@ -128,11 +128,11 @@ button {
 }
 
 .modulo {
-    padding: 8px 12px;
+    padding: 6px 10px;
     border: 1px solid var(--borda);
-    border-radius: 12px;
+    border-radius: 10px;
     background: rgba(25, 26, 49, 0.95);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -141,45 +141,45 @@ button {
 .titulo-modulo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 5px;
+    gap: 8px;
+    margin-bottom: 4px;
 }
 
 .numero {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     border: 1px solid #5148a1;
-    border-radius: 8px;
+    border-radius: 6px;
     background: #29264e;
     color: #a69cff;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
 }
 
 .titulo-modulo h2 {
-    font-size: clamp(13px, 1.9vw, 16px);
+    font-size: clamp(12px, 1.6vw, 15px);
 }
 
 .titulo-modulo p {
     color: var(--texto-secundario);
-    font-size: clamp(10px, 1.4vw, 13px);
+    font-size: clamp(10px, 1.3vw, 12px);
 }
 
 .opcoes-dificuldade,
 .opcoes-tema {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 6px;
 }
 
 .opcoes-cartas {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
+    gap: 5px;
 }
 
 .btn-interativo {
@@ -193,15 +193,15 @@ button {
 .opcao-dificuldade,
 .opcao-tema,
 .opcao-cartas {
-    height: clamp(46px, 7.2vh, 60px);
+    height: clamp(40px, 5.8vh, 50px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    padding: 4px 2px;
+    gap: 1px;
+    padding: 2px;
     border: 2px solid var(--borda);
-    border-radius: 10px;
+    border-radius: 8px;
     background: #1e2039;
     color: var(--texto);
     cursor: pointer;
@@ -220,18 +220,18 @@ button {
 .opcao-cartas.selecionada {
     border-color: var(--roxo);
     background: linear-gradient(145deg, #382f6e, #222b52);
-    box-shadow: 0 0 12px rgba(118, 103, 255, 0.35);
+    box-shadow: 0 0 10px rgba(118, 103, 255, 0.35);
 }
 
 .icone-opcao {
-    font-size: clamp(14px, 2.2vw, 20px);
+    font-size: clamp(13px, 1.8vw, 17px);
     line-height: 1;
 }
 
 .opcao-dificuldade strong,
 .opcao-tema strong,
 .opcao-cartas strong {
-    font-size: clamp(11px, 1.7vw, 14px);
+    font-size: clamp(10px, 1.4vw, 12px);
     line-height: 1.1;
 }
 
@@ -239,7 +239,7 @@ button {
 .opcao-tema small,
 .opcao-cartas small {
     color: var(--texto-secundario);
-    font-size: clamp(9px, 1.3vw, 11px);
+    font-size: clamp(9px, 1.1vw, 10px);
     text-align: center;
     line-height: 1;
 }
@@ -248,71 +248,72 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    font-size: clamp(12px, 1.8vw, 15px);
+    gap: 2px;
+    font-size: clamp(11px, 1.5vw, 14px);
     line-height: 1;
 }
 
 footer {
     color: #777b9c;
-    font-size: 10px;
-    letter-spacing: 1.5px;
+    font-size: 9px;
+    letter-spacing: 1px;
     text-align: center;
 }
 
 footer span {
     color: var(--roxo);
-    margin: 0 4px;
+    margin: 0 3px;
 }
 
+/* TELA DO JOGO */
 .tela-jogo {
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
 }
 
 .cabecalho-jogo {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
-    border-radius: 12px;
+    padding: 6px 10px;
+    border-radius: 10px;
     border: 1px solid var(--borda);
     background: var(--painel);
 }
 
 .cabecalho-jogo h2 {
-    font-size: clamp(15px, 2vw, 18px);
+    font-size: clamp(13px, 1.8vw, 16px);
 }
 
 .cabecalho-jogo p {
     color: var(--texto-secundario);
-    font-size: clamp(11px, 1.4vw, 13px);
+    font-size: clamp(10px, 1.3vw, 12px);
 }
 
 .acoes-jogo {
     display: flex;
-    gap: 6px;
+    gap: 5px;
 }
 
 .acoes-jogo button {
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 8px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px;
     border: 1px solid var(--borda);
     background: #25284a;
     color: var(--texto);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
 }
 
 .painel-jogo {
     display: flex;
     justify-content: space-around;
-    padding: 6px;
-    border-radius: 12px;
+    padding: 5px;
+    border-radius: 10px;
     border: 1px solid var(--borda);
     background: var(--painel);
     text-align: center;
@@ -325,11 +326,11 @@ footer span {
 
 .painel-jogo span {
     color: var(--texto-secundario);
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .painel-jogo strong {
-    font-size: clamp(14px, 2vw, 17px);
+    font-size: clamp(13px, 1.8vw, 15px);
     color: var(--texto);
 }
 
@@ -342,12 +343,11 @@ footer span {
     width: 100%;
 }
 
-/* TABULEIRO DINÂMICO QUE SE ADAPTA A QUALQUER TELA */
 .tabuleiro {
     display: grid;
     grid-template-columns: repeat(var(--colunas), 1fr);
     grid-template-rows: repeat(var(--linhas), 1fr);
-    gap: clamp(4px, 1vw, 10px);
+    gap: clamp(4px, 1vh, 8px);
     width: 100%;
     height: 100%;
     max-width: 100%;
@@ -375,13 +375,13 @@ footer span {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: clamp(6px, 1.2vw, 12px);
+    border-radius: 8px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transition: transform 0.35s cubic-bezier(0.4, 0.2, 0.2, 1), box-shadow 0.3s ease, background 0.3s ease;
     border: 2px solid var(--borda);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    font-size: clamp(1.2rem, 5vmin, 2.6rem);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    font-size: clamp(1.1rem, 4.5vmin, 2.4rem);
 }
 
 .carta .frente-carta {
@@ -400,20 +400,20 @@ footer span {
 
 .carta.virada .verso-carta {
     transform: rotateY(360deg);
-    box-shadow: 0 0 15px rgba(67, 140, 255, 0.5);
+    box-shadow: 0 0 12px rgba(67, 140, 255, 0.5);
     border-color: var(--azul);
 }
 
 .carta.encontrada .verso-carta {
     background: #1b382b;
     border-color: #2e7d54;
-    box-shadow: 0 0 15px rgba(46, 125, 84, 0.6);
+    box-shadow: 0 0 12px rgba(46, 125, 84, 0.6);
 }
 
 .carta.encontrada-ia .verso-carta {
     background: linear-gradient(135deg, #3a3f58 0%, #202336 100%);
     border-color: #b8c2cc;
-    box-shadow: 0 0 15px rgba(184, 194, 204, 0.65);
+    box-shadow: 0 0 12px rgba(184, 194, 204, 0.65);
     color: #e2e8f0;
 }
 
@@ -421,15 +421,14 @@ footer span {
 .carta.erro .verso-carta {
     border-color: #ff3333 !important;
     background: #3d1a1a !important;
-    box-shadow: 0 0 15px #ff3333 !important;
+    box-shadow: 0 0 12px #ff3333 !important;
 }
 
 #mensagem-jogo {
     text-align: center;
-    font-size: clamp(13px, 1.8vw, 15px);
+    font-size: clamp(12px, 1.6vw, 14px);
     font-weight: bold;
     padding: 2px 0;
-    transition: color 0.3s ease;
 }
 
 .turno-jogador {
@@ -450,99 +449,99 @@ footer span {
     align-items: center;
     justify-content: center;
     z-index: 100;
-    padding: 16px;
+    padding: 12px;
 }
 
 .conteudo-vitoria,
 .conteudo-config {
     background: #191a31;
     border: 2px solid var(--roxo);
-    border-radius: 18px;
-    padding: 20px 18px;
+    border-radius: 16px;
+    padding: 16px;
     width: 100%;
-    max-width: 400px;
+    max-width: 360px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(118, 103, 255, 0.4);
+    box-shadow: 0 0 25px rgba(118, 103, 255, 0.4);
 }
 
 .icone-vitoria {
-    font-size: 44px;
-    margin-bottom: 4px;
+    font-size: 36px;
+    margin-bottom: 2px;
 }
 
 .conteudo-vitoria h2,
 .conteudo-config h2 {
-    font-size: 20px;
-    margin-bottom: 8px;
+    font-size: 17px;
+    margin-bottom: 6px;
 }
 
 .conteudo-vitoria p {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--texto-secundario);
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 .config-grupo {
-    margin: 12px 0;
+    margin: 10px 0;
     text-align: left;
 }
 
 .config-grupo label {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--texto-secundario);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .config-grupo input[type="range"] {
     width: 100%;
     accent-color: var(--roxo);
     cursor: pointer;
-    height: 8px;
+    height: 6px;
     background: #29264e;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .estatisticas-vitoria {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .stat-box {
     background: #13152a;
     border: 1px solid var(--borda);
-    border-radius: 10px;
-    padding: 8px;
+    border-radius: 8px;
+    padding: 6px;
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
 .stat-box span {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--texto-secundario);
 }
 
 .stat-box strong {
-    font-size: 16px;
+    font-size: 14px;
     color: var(--texto);
 }
 
 .botoes-vitoria {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .btn-primario,
 .btn-secundario {
-    height: 44px;
-    border-radius: 10px;
+    height: 38px;
+    border-radius: 8px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
 }
 
@@ -550,7 +549,7 @@ footer span {
     background: linear-gradient(110deg, var(--roxo), var(--azul));
     color: white;
     border: none;
-    box-shadow: 0 4px 12px rgba(118, 103, 255, 0.3);
+    box-shadow: 0 3px 10px rgba(118, 103, 255, 0.3);
 }
 
 .btn-secundario {
@@ -560,12 +559,10 @@ footer span {
 }
 
 @media (max-width: 480px) {
-
-    .opcoes-dificuldade,
-    .opcoes-tema {
+    .opcoes-dificuldade, .opcoes-tema {
         grid-template-columns: repeat(2, 1fr);
     }
-
+    
     .opcoes-cartas {
         grid-template-columns: repeat(3, 1fr);
     }
