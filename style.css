@@ -630,3 +630,31 @@ footer { font-size: clamp(12px, 1.8vh, 18px); }
     .acoes-jogo button { padding: 0 8px; font-size: 15px; }
     .conteudo-vitoria, .conteudo-config { padding: 20px; }
 }
+
+/* ===== +250px DE LARGURA E ELEMENTOS ~17% MAIORES ===== */
+.app-container { max-width: min(100vw, 1750px); }
+.icone-logo { width: clamp(56px, 9vh, 100px); height: clamp(56px, 9vh, 100px); font-size: clamp(30px, 5.2vh, 56px); }
+.cabecalho h1 { font-size: clamp(32px, 5.8vh, 74px); }
+.cabecalho p { font-size: clamp(18px, 3vh, 32px); }
+#jogar, #btn-config-principal { height: clamp(66px, 10.5vh, 120px); font-size: clamp(24px, 4vh, 44px); }
+.numero { width: clamp(38px, 5.8vh, 60px); height: clamp(38px, 5.8vh, 60px); font-size: clamp(18px, 2.8vh, 30px); }
+.titulo-modulo h2 { font-size: clamp(21px, 3.5vh, 37px); }
+.titulo-modulo p { font-size: clamp(15px, 2.5vh, 26px); }
+.opcao-dificuldade, .opcao-tema, .opcao-cartas { height: clamp(68px, 12vh, 140px); }
+.opcao-dificuldade strong, .opcao-tema strong, .opcao-cartas strong { font-size: clamp(18px, 3vh, 32px); }
+.opcao-dificuldade small, .opcao-tema small, .opcao-cartas small { font-size: clamp(13px, 2.2vh, 23px); }
+.icone-opcao { font-size: clamp(26px, 4.7vh, 54px); }
+.figuras { font-size: clamp(24px, 4vh, 46px); }
+.cabecalho-jogo h2 { font-size: clamp(24px, 4.2vh, 46px); }
+.cabecalho-jogo p { font-size: clamp(16px, 2.8vh, 30px); }
+.acoes-jogo button { height: clamp(56px, 8.2vh, 88px); font-size: clamp(19px, 2.8vh, 30px); }
+.painel-jogo span { font-size: clamp(16px, 2.7vh, 28px); }
+.painel-jogo strong { font-size: clamp(30px, 4.9vh, 56px); }
+#mensagem-jogo { font-size: clamp(24px, 4vh, 44px); }
+.carta .frente-carta, .carta .verso-carta { font-size: clamp(2.8rem, 13vmin, 8.5rem); }
+.conteudo-vitoria, .conteudo-config { max-width: 780px; }
+
+@media (max-width: 480px) {
+    .opcao-dificuldade, .opcao-tema, .opcao-cartas { height: clamp(50px, 7.5vh, 84px); }
+    .acoes-jogo button { font-size: 15px; }
+}
