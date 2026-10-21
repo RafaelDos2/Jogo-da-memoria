@@ -582,3 +582,51 @@ footer span {
     .opcao-cartas { height: 50px; }
     #jogar, #btn-config-principal { height: 48px; }
 }
+
+/* ===== TELA MAIOR (ACESSIBILIDADE) - tudo escala com a altura da tela ===== */
+.app-container { max-width: min(100vw, 1500px); padding: 1.5vh 3vw; }
+.menu { gap: 1vh; }
+.icone-logo { width: clamp(52px, 8vh, 88px); height: clamp(52px, 8vh, 88px); font-size: clamp(28px, 4.5vh, 48px); }
+.cabecalho h1 { font-size: clamp(30px, 5vh, 64px); }
+.cabecalho p { font-size: clamp(16px, 2.6vh, 28px); }
+
+#jogar, #btn-config-principal { height: clamp(60px, 9vh, 104px); font-size: clamp(22px, 3.4vh, 38px); }
+
+.numero { width: clamp(34px, 5vh, 52px); height: clamp(34px, 5vh, 52px); font-size: clamp(16px, 2.4vh, 26px); }
+.titulo-modulo h2 { font-size: clamp(19px, 3vh, 32px); }
+.titulo-modulo p { font-size: clamp(14px, 2.1vh, 22px); }
+
+.opcao-dificuldade, .opcao-tema, .opcao-cartas { height: clamp(64px, 10.5vh, 120px); }
+.opcao-dificuldade strong, .opcao-tema strong, .opcao-cartas strong { font-size: clamp(16px, 2.6vh, 28px); }
+.opcao-dificuldade small, .opcao-tema small, .opcao-cartas small { font-size: clamp(12px, 1.9vh, 20px); }
+.icone-opcao { font-size: clamp(24px, 4vh, 46px); }
+.figuras { font-size: clamp(22px, 3.4vh, 40px); }
+footer { font-size: clamp(12px, 1.8vh, 18px); }
+
+/* Tela do jogo */
+.cabecalho-jogo h2 { font-size: clamp(22px, 3.6vh, 40px); }
+.cabecalho-jogo p { font-size: clamp(15px, 2.4vh, 26px); }
+.acoes-jogo button { height: clamp(52px, 7vh, 76px); font-size: clamp(17px, 2.4vh, 26px); padding: 0 20px; }
+.painel-jogo span { font-size: clamp(15px, 2.3vh, 24px); }
+.painel-jogo strong { font-size: clamp(26px, 4.2vh, 48px); }
+#mensagem-jogo { font-size: clamp(22px, 3.4vh, 38px); }
+.carta .frente-carta, .carta .verso-carta { font-size: clamp(2.4rem, 11vmin, 7rem); border-radius: 16px; }
+
+/* Janelas */
+.conteudo-vitoria, .conteudo-config { max-width: 680px; padding: 32px; }
+.icone-vitoria { font-size: 80px; }
+.conteudo-vitoria h2, .conteudo-config h2 { font-size: 34px; }
+.conteudo-vitoria p { font-size: 22px; }
+.config-grupo label { font-size: 22px; }
+.config-grupo input[type="range"] { height: 16px; }
+.stat-box span { font-size: 18px; }
+.stat-box strong { font-size: 30px; }
+.btn-primario, .btn-secundario { height: 70px; font-size: 24px; }
+
+/* Celular em pé: menos colunas, então reduz um pouco para não rolar */
+@media (max-width: 480px) {
+    .app-container { padding: 1vh 10px; }
+    .opcao-dificuldade, .opcao-tema, .opcao-cartas { height: clamp(48px, 7.2vh, 80px); }
+    .acoes-jogo button { padding: 0 8px; font-size: 15px; }
+    .conteudo-vitoria, .conteudo-config { padding: 20px; }
+}
